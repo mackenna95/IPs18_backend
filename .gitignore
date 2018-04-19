@@ -1,0 +1,5 @@
+.idea/
+.requirements*
+env*
+*pytest*
+*pycache*
