@@ -1,5 +1,5 @@
-.idea/
-.requirements*
-env*
-*pytest*
-*pycache*
+#ignore the env directory
+env
+.pytest_cache
+__pycache__/
+*.pyc
