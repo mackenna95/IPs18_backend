@@ -2,6 +2,7 @@ import numpy as np
 import skimage
 import base64
 
+
 class ImageProcessing:
     """This is a ImageProcessing class.
 
@@ -9,8 +10,8 @@ class ImageProcessing:
 
     Attributes:
         convert_from_64 (string): converts bas64 string image to np.array
-        histogram_eq (string, array(int/float)): returns histogram equalization of image
-        contrast_stretching (string, int/float): returns contrast stretching of image
+        histogram_eq (string, array(int/float)): returns histogram equalization
+        contrast_stretching (string, int/float): returns contrast stretching
         log_compression (string, int): returns log compression of image
         reverse_video (string): returns reverse video of image
         convert_to_64 (np.array): converts np.array image to base64 string
@@ -18,7 +19,8 @@ class ImageProcessing:
     Arguments:
         img (string): base64 image file
         hist_rng (array): 1x2 array of the range for histogram_eq
-        cont_rng (int/float): between 0 and 100 indicating amount of contrast stretching
+        cont_rng (int/float): between 0 and 100 indicating amount
+        of contrast stretching
         log_rng (int): 0 if standard log compression 1 if inverted
     """
 
