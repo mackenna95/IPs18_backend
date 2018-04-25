@@ -23,17 +23,17 @@ def test_Image_Processing():
     img_byte_r = base64.decodestring(img_byte_s)
     img_array = np.frombuffer(img_byte_r, dtype=np.int32)
 
-    output = ImageProcessing.convert_from_64(d['img_orig'])
-    assert output == img_array
+    output = ImageProcessing.convert_from_64(d2['img_orig'])
+    all(output == img_array)
     output = ImageProcessing.convert_to_64(img_array)
-    assert output == d['img_orig']
-    output = ImageProcessing.histogram_eq(d['img_orig'], d['img_metadata']['hist_eq'])
+    all(output == d2['img_orig'])
+    output = ImageProcessing.histogram_eq(d2['img_orig'], d['img_metadata']['hist_eq'])
     assert output == 1
-    output = ImageProcessing.contrast_stretching(d['img_orig'], d['img_metadata']['contrast'])
+    output = ImageProcessing.contrast_stretching(d2['img_orig'], d['img_metadata']['contrast'])
     assert output == 2
-    output = ImageProcessing.log_compression(d['img_orig'], d['img_metadata']['log_comp'])
+    output = ImageProcessing.log_compression(d2['img_orig'], d['img_metadata']['log_comp'])
     assert output == 1
-    output = ImageProcessing.reverse_video(d['img_orig'])
+    output = ImageProcessing.reverse_video(d2['img_orig'])
     assert output == 2.5
     pytest.raises(ValueError, ImageProcessing.convert_from_64, d_color['img_orig'])
     return
