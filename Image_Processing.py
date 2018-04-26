@@ -1,5 +1,5 @@
 import numpy as np
-import skimage
+from skimage import exposure
 import base64
 import cv2
 
@@ -66,6 +66,7 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
+            img_array.astype('uint8')
             img_data = cv2.imencode(".png", img_array)[1].tostring()
             img_byte_s = base64.b64encode(img_data)
             img_str = img_byte_s.decode("utf-8")
@@ -79,7 +80,7 @@ class ImageProcessing:
         """
         :param img:          base64 image string
         :param hist_rng      array of ranges for histogram_eq
-        :returns imgHist:    np.array histogram equalized image
+        :returns img_hist:   np.array histogram equalized image
         :raises ImportError: packages not found
         """
 
@@ -89,14 +90,24 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            imgData = convert_from_64(img)
-            # code
-            imgHist = convert_to_64(imgData)
+            # imgData = self.convert_from_64(img)
+            img_data = base64.b64decode(img)
+            img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8),
+                                     -1)
+            # Equalization
+            img_eq = exposure.equalize_hist(img_array)
+
+            # imgHist = self.convert_to_64(img_eq)
+            img_eq.astype('uint8')
+            img_data = cv2.imencode(".png", img_eq)[1].tostring()
+            img_byte_s = base64.b64encode(img_data)
+            img_str = img_byte_s.decode("utf-8")
+            img_hist = img_str
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
-        return imgHist
+        return img_hist
 
     def contrast_stretching(img, cont_rng):
         """
