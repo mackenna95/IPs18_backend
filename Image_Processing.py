@@ -142,6 +142,7 @@ class ImageProcessing:
         logging.info("Success: histogram equalization returned.")
         return img_reverse
 
+
 def log_comp(img_array):
     """
     :param img_array:  np.array image
