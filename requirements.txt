@@ -4,4 +4,4 @@ pytest-cov
 numpy
 scikit-image
 pybase64
-opencv
+opencv-python
