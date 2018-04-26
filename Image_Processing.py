@@ -12,18 +12,19 @@ class ImageProcessing:
 
     Attributes:
         convert_from_64 (string): converts bas64 string image to np.array
-        histogram_eq (string, array(int/float)): returns histogram equalization
-        contrast_stretching (string, int/float): returns contrast stretching
+        histogram_eq (string, int/float): returns histogram equalization
+        contrast_stretching (string, array(int/float)): returns
+        contrast stretching
         log_compression (string, int): returns log compression of image
-        reverse_video (string): returns reverse video of image
+        reverse_video (string, bool): returns reverse video of image
         convert_to_64 (np.array): converts np.array image to base64 string
 
     Arguments:
         img (string): base64 image file
-        hist_rng (array): 1x2 array of the range for histogram_eq
-        cont_rng (int/float): between 0 and 100 indicating amount
+        hist_rng (int/float): num of bins for histogram_eq
+        cont_rng (array): between 0 and 100 indicating amount
         of contrast stretching
-        log_rng (int): 0 if standard log compression 1 if inverted
+        log_rng (bool): True if standard log compression False if inverted
     """
 
     def __init__(self, img, hist_rng, cont_rng, log_rng):
@@ -35,7 +36,7 @@ class ImageProcessing:
     def histogram_eq(img, hist_rng):
         """
         :param img:          base64 image string
-        :param hist_rng      array of ranges for histogram_eq
+        :param hist_rng      float of bins for histogram_eq
         :returns img_hist:   base64 string histogram equalized image
         :raises ImportError: packages not found
         """
@@ -49,9 +50,11 @@ class ImageProcessing:
             img_array = convert_from_64(img)
 
             # Equalization
-            img_eq = exposure.equalize_hist(img_array)
+            hist_rng_exp = hist_rng * img_array.shape[0] * img_array[1]
+            img_eq = exposure.equalize_hist(img_array, hist_rng_exp)
+            img_eq_exp = img_eq * 255
 
-            img_hist = convert_to_64(img_eq)
+            img_hist = convert_to_64(img_eq_exp)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")

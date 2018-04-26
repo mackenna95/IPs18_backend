@@ -18,21 +18,21 @@ def test_Image_Processing():
     d3_text = f.read()
 
     d = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-         'img_metadata': {'hist_eq': [0, 255],  # histogram equalization
+         'img_metadata': {'hist_eq': 0,  # histogram equalization
                           'contrast': [2, 98],  # contrast stretching
                           'log_comp': True,
                           'reverse': True},
          'img_orig': d_text}
 
     d2 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-          'img_metadata': {'hist_eq': [1, 200],  # histogram equalization
+          'img_metadata': {'hist_eq': 40,  # histogram equalization
                            'contrast': [2, 98],  # contrast stretching
                            'log_comp': False,
                            'reverse': True},
           'img_orig': d2_text}
 
     d3 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-          'img_metadata': {'hist_eq': [1, 200],  # histogram equalization
+          'img_metadata': {'hist_eq': 40,  # histogram equalization
                            'contrast': [10, 100],  # contrast stretching
                            'log_comp': False,
                            'reverse': True},
@@ -47,11 +47,14 @@ def test_Image_Processing():
     # assert output == d2['img_orig']
 
     # Histogram Equalization
-    img_eq = exposure.equalize_hist(img_array)
-    img_hist = convert_to_64(img_eq)
+    hist = d2['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
+    img_eq = exposure.equalize_hist(img_array, hist)
+    img_eq_exp = img_eq * 255
+
+    img_hist = convert_to_64(img_eq_exp)
 
     output = ImageProcessing.histogram_eq(d2['img_orig'],
-                                          d['img_metadata']['hist_eq'])
+                                          d2['img_metadata']['hist_eq'])
     assert output == img_hist
 
     # Contrast stretching
