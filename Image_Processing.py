@@ -1,6 +1,7 @@
 import numpy as np
 import skimage
 import base64
+import cv2
 
 
 class ImageProcessing:
@@ -33,7 +34,7 @@ class ImageProcessing:
     def convert_from_64(img):
         """
         :param img:          base64 image string
-        :returns imgData:    np.array image
+        :returns img_array:  np.array image
         :raises ImportError: packages not found
         """
 
@@ -44,17 +45,19 @@ class ImageProcessing:
 
         try:
             imgData = base64.b64decode(img)
-            # code
+            img_byte_s = base64.b64encode(imgData)
+            img_byte_r = base64.decodestring(img_byte_s)
+            img_array = np.frombuffer(img_byte_r, dtype=np.int32)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: image as np array returned.")
-        return imgData
+        return img_array
 
-    def convert_to_64(imgData):
+    def convert_to_64(img_array):
         """
-        :param imgData:      np.array image
-        :returns img:        base64 image string
+        :param img_array:    np.array image
+        :returns img_str:    base64 image string
         :raises ImportError: packages not found
         """
 
@@ -64,13 +67,17 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            img = base64.decodebytes(imgData)
-            # code
+            imgData = cv2.imencode(".png", img_array)[1].tostring()
+            img_byte_s = base64.b64encode(imgData)
+            img_str = img_byte_s.decode("utf-8")
+            #img = base64.b64encode(imgData)
+            #img_byte_s = base64.b64encode(img) # this is byte type, need string type
+            #img_str = img_byte_s.decode("utf-8")
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: image as np array returned.")
-        return img
+        return img_str
 
     def histogram_eq(img, hist_rng):
         """
