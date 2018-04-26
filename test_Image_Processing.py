@@ -3,6 +3,7 @@ def test_Image_Processing():
     import numpy as np
     import base64
     import cv2
+    from skimage import exposure
     from Image_Processing import ImageProcessing
 
     f = open('d.txt', 'r')
@@ -40,9 +41,13 @@ def test_Image_Processing():
     assert (output == img_array).all()
     # output = ImageProcessing.convert_to_64(img_array)
     # assert output == d2['img_orig']
+
+    img_eq = exposure.equalize_hist(img_array)
+    img_hist = ImageProcessing.convert_to_64(img_eq)
+
     output = ImageProcessing.histogram_eq(d2['img_orig'],
                                           d['img_metadata']['hist_eq'])
-    assert output == 1
+    assert output == img_hist
     output = ImageProcessing.contrast_stretching(d2['img_orig'],
                                                  d['img_metadata']['contrast'])
     assert output == 2
