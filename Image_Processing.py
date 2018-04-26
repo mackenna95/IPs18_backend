@@ -70,9 +70,6 @@ class ImageProcessing:
             imgData = cv2.imencode(".png", img_array)[1].tostring()
             img_byte_s = base64.b64encode(imgData)
             img_str = img_byte_s.decode("utf-8")
-            #img = base64.b64encode(imgData)
-            #img_byte_s = base64.b64encode(img) # this is byte type, need string type
-            #img_str = img_byte_s.decode("utf-8")
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
