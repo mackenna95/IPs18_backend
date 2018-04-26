@@ -44,10 +44,8 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            imgData = base64.b64decode(img)
-            img_byte_s = base64.b64encode(imgData)
-            img_byte_r = base64.decodestring(img_byte_s)
-            img_array = np.frombuffer(img_byte_r, dtype=np.int32)
+            img_data = base64.b64decode(img)
+            img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), -1)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
@@ -67,8 +65,8 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            imgData = cv2.imencode(".png", img_array)[1].tostring()
-            img_byte_s = base64.b64encode(imgData)
+            img_data = cv2.imencode(".png", img_array)[1].tostring()
+            img_byte_s = base64.b64encode(img_data)
             img_str = img_byte_s.decode("utf-8")
         except ImportError:
             logging.debug('ImportError: packages not found')
