@@ -7,6 +7,8 @@ def test_Image_Processing():
     from Image_Processing import ImageProcessing
     from Image_Processing import convert_from_64
     from Image_Processing import convert_to_64
+    from Image_Processing import log_comp
+    from Image_Processing import invert
 
     f = open('d.txt', 'r')
     d_text = f.read()
@@ -70,10 +72,18 @@ def test_Image_Processing():
     assert output == img_reverse
 
     # Log Compression
+    if d2['img_metadata']['log_comp']:
+        img_array_log = log_comp(img_array)
+    else:
+        img_rev = invert(img_array)
+        img_rev_log = log_comp(img_rev)
+        img_array_log = invert(img_rev_log)
+
+    img_log = convert_to_64(img_array_log)
 
     output = ImageProcessing.log_compression(d2['img_orig'],
                                              d2['img_metadata']['log_comp'])
-    assert output == 2.5
+    assert output == img_log
 
     pytest.raises(ValueError,
                   ImageProcessing.convert_from_64,

@@ -2,6 +2,7 @@ import numpy as np
 from skimage import exposure
 import base64
 import cv2
+import math
 
 
 class ImageProcessing:
@@ -100,8 +101,16 @@ class ImageProcessing:
 
         try:
             img_array = convert_from_64(img)
-            # code
-            img_log = convert_to_64(img_array)
+
+            # log compression
+            if log_rng:
+                img_array_log = log_comp(img_array)
+            else:
+                img_rev = invert(img_array)
+                img_rev_log = log_comp(img_rev)
+                img_array_log = invert(img_rev_log)
+
+            img_log = convert_to_64(img_array_log)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
@@ -124,8 +133,7 @@ class ImageProcessing:
             img_array = convert_from_64(img)
 
             # Reverse Video
-            arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
-            img_rev = np.subtract(arr255, img_array)
+            img_rev = invert(img_array)
 
             img_reverse = convert_to_64(img_rev)
         except ImportError:
@@ -133,6 +141,32 @@ class ImageProcessing:
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
         return img_reverse
+
+def log_comp(img_array):
+    """
+    :param img_array:  np.array image
+    :returns img_rev:  np.array inverted image
+    """
+    import logging
+    img_array_log = np.zeros((img_array.shape[0], img_array.shape[1]))
+    c = 255 / math.log((1 + img_array.max()), 10)
+    for i in range(img_array.shape[0]):
+        for j in range(img_array.shape[1]):
+            img_array_log[i][j] = c * math.log((1 + img_array[i][j]), 10)
+    logging.info("Success: image as np array returned.")
+    return img_array_log
+
+
+def invert(img_array):
+    """
+    :param img_array:  np.array image
+    :returns img_rev:  np.array inverted image
+    """
+    import logging
+    arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+    img_rev = np.subtract(arr255, img_array)
+    logging.info("Success: image as np array returned.")
+    return img_rev
 
 
 def convert_from_64(img):
