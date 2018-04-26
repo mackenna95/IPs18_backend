@@ -24,7 +24,7 @@ def test_Image_Processing():
 
     d2 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
           'img_metadata': {'hist_eq': [1, 200],  # histogram equalization
-                           'contrast': [2,98],  # contrast stretching
+                           'contrast': [2, 98],  # contrast stretching
                            'log_comp': False,
                            'reverse': True},
           'img_orig': d2_text}
