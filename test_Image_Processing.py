@@ -60,11 +60,21 @@ def test_Image_Processing():
     out = ImageProcessing.contrast_stretching(d2['img_orig'],
                                               d2['img_metadata']['contrast'])
     assert out == img_cont
+
+    # Reverse Video
+    arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+    img_rev = np.subtract(arr255, img_array)
+    img_reverse = convert_to_64(img_rev)
+
+    output = ImageProcessing.reverse_video(d2['img_orig'])
+    assert output == img_reverse
+
+    # Log Compression
+
     output = ImageProcessing.log_compression(d2['img_orig'],
                                              d2['img_metadata']['log_comp'])
-    assert output == 1
-    output = ImageProcessing.reverse_video(d2['img_orig'])
     assert output == 2.5
+
     pytest.raises(ValueError,
                   ImageProcessing.convert_from_64,
                   d_color['img_orig'])

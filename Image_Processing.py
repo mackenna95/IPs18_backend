@@ -35,7 +35,7 @@ class ImageProcessing:
         """
         :param img:          base64 image string
         :param hist_rng      array of ranges for histogram_eq
-        :returns img_hist:   np.array histogram equalized image
+        :returns img_hist:   base64 string histogram equalized image
         :raises ImportError: packages not found
         """
 
@@ -61,7 +61,7 @@ class ImageProcessing:
         """
         :param img:          base64 image string
         :param cont_rng      array of range for contrast_stretching
-        :returns img_cont:   np.array contrast stretched image
+        :returns img_cont:   base64 string contrast stretched image
         :raises ImportError: packages not found
         """
 
@@ -88,8 +88,8 @@ class ImageProcessing:
     def log_compression(img, log_rng):
         """
         :param img:          base64 image string
-        :param cont_rng      array of range for contrast_stretching
-        :returns imgHist:    np.array histogram equalized image
+        :param log_rng       array of range for log compression
+        :returns img_log:    base64 string log compressed image
         :raises ImportError: packages not found
         """
 
@@ -99,21 +99,20 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            imgData = convert_from_64(img)
+            img_array = convert_from_64(img)
             # code
-            imgLog = convert_to_64(imgData)
+            img_log = convert_to_64(img_array)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
-        return imgLog
+        return img_log
 
     def reverse_video(img):
         """
-        :param img:          base64 image string
-        :param cont_rng      array of range for contrast_stretching
-        :returns imgHist:    np.array histogram equalized image
-        :raises ImportError: packages not found
+        :param img:           base64 image string
+        :returns img_reverse: base64 string inverted image
+        :raises ImportError:  packages not found
         """
 
         import logging
@@ -122,14 +121,18 @@ class ImageProcessing:
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
         try:
-            imgData = convert_from_64(img)
-            # code
-            imgReverse = convert_to_64(imgData)
+            img_array = convert_from_64(img)
+
+            # Reverse Video
+            arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+            img_rev = np.subtract(arr255, img_array)
+
+            img_reverse = convert_to_64(img_rev)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
-        return imgReverse
+        return img_reverse
 
 
 def convert_from_64(img):
