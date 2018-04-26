@@ -45,7 +45,8 @@ class ImageProcessing:
 
         try:
             img_data = base64.b64decode(img)
-            img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), -1)
+            img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8),
+                                     -1)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
