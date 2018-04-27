@@ -136,7 +136,6 @@ def test_Image_Processing():
                                              png_g['img_metadata']['format'])
     assert output == img_log
 
-    pytest.raises(ValueError,
-                  ImageProcessing.convert_from_64,
-                  png_c['img_orig'])
+    # Jpeg file unsupport
+    pytest.raises(TypeError, convert_from_64(jpeg_g['img_orig']))
     return

@@ -190,13 +190,14 @@ def convert_from_64(img):
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    try:
-        img_data = base64.b64decode(img)
-        img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8),
-                                 0)
-    except ImportError:
-        logging.debug('ImportError: packages not found')
-        raise ImportError("Import packages not found.")
+    img_data = base64.b64decode(img)
+    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+
+    if isinstance(img_array, np.ndarray):
+        logging.debug('Correct File Type')
+    else:
+        logging.debug('TypeError: Incorrect File Type')
+        raise TypeError('My type error')
     logging.info("Success: image as np array returned.")
     return img_array
 
