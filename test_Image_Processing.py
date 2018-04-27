@@ -107,10 +107,10 @@ def test_Image_Processing():
     img_rescale = exposure.rescale_intensity(img_array, in_range=(p, q))
     img_cont = convert_to_64(img_rescale, png_g['img_metadata']['format'])
 
-    out = ImageProcessing.contrast_stretching(png_g['img_orig'],
-                                              png_g['img_metadata']['contrast'],
-                                              png_g['img_metadata']['format'])
-    assert out == img_cont
+    o = ImageProcessing.contrast_stretching(png_g['img_orig'],
+                                            png_g['img_metadata']['contrast'],
+                                            png_g['img_metadata']['format'])
+    assert o == img_cont
 
     # Reverse Video
     arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
