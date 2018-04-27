@@ -10,85 +10,133 @@ def test_Image_Processing():
     from Image_Processing import log_comp
     from Image_Processing import invert
 
-    f = open('d.txt', 'r')
-    d_text = f.read()
-    f = open('d2.txt', 'r')
-    d2_text = f.read()
-    f = open('d3.txt', 'r')
-    d3_text = f.read()
+    f = open('png_g2.txt', 'r')
+    png_g_text2 = f.read()
+    f = open('png_g.txt', 'r')
+    png_g_text = f.read()
+    f = open('jpeg_g.txt', 'r')
+    jpeg_g_text = f.read()
+    f = open('tiff_g.txt', 'r')
+    tiff_g_text = f.read()
 
-    d = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-         'img_metadata': {'hist_eq': 0,  # histogram equalization
-                          'contrast': [2, 98],  # contrast stretching
-                          'log_comp': True,
-                          'reverse': True},
-         'img_orig': d_text}
+    f = open('png_c.txt', 'r')
+    png_c_text = f.read()
+    f = open('jpeg_c.txt', 'r')
+    jpeg_c_text = f.read()
+    f = open('tiff_c.txt', 'r')
+    tiff_c_text = f.read()
 
-    d2 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-          'img_metadata': {'hist_eq': 40,  # histogram equalization
-                           'contrast': [2, 98],  # contrast stretching
-                           'log_comp': False,
-                           'reverse': True},
-          'img_orig': d2_text}
+    png_g2 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+              'img_metadata': {'hist_eq': 0,
+                               'contrast': [2, 98],
+                               'log_comp': True,
+                               'reverse': True,
+                               'format': '.png'},
+              'img_orig': png_g_text2}
 
-    d3 = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
-          'img_metadata': {'hist_eq': 40,  # histogram equalization
-                           'contrast': [10, 100],  # contrast stretching
-                           'log_comp': False,
-                           'reverse': True},
-          'img_orig': d3_text}
+    png_g = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+             'img_metadata': {'hist_eq': 40,
+                              'contrast': [2, 98],
+                              'log_comp': False,
+                              'reverse': True,
+                              'format': '.tiff'},
+             'img_orig': png_g_text}
 
-    img_data = base64.b64decode(d2['img_orig'])
-    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), -1)
+    jpeg_g = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+              'img_metadata': {'hist_eq': 40,
+                               'contrast': [10, 100],
+                               'log_comp': False,
+                               'reverse': True,
+                               'format': '.png'},
+              'img_orig': jpeg_g_text}
 
-    output = convert_from_64(d2['img_orig'])
+    tiff_g = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+              'img_metadata': {'hist_eq': 20,
+                               'contrast': [10, 80],
+                               'log_comp': False,
+                               'reverse': True,
+                               'format': '.png'},
+              'img_orig': tiff_g_text}
+
+    png_c = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+             'img_metadata': {'hist_eq': 20,
+                              'contrast': [10, 80],
+                              'log_comp': False,
+                              'reverse': True,
+                              'format': '.png'},
+             'img_orig': png_c_text}
+
+    jpeg_c = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+              'img_metadata': {'hist_eq': 40,
+                               'contrast': [10, 100],
+                               'log_comp': False,
+                               'reverse': True,
+                               'format': '.png'},
+              'img_orig': jpeg_c_text}
+
+    tiff_c = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
+              'img_metadata': {'hist_eq': 20,
+                               'contrast': [10, 80],
+                               'log_comp': False,
+                               'reverse': True,
+                               'format': '.png'},
+              'img_orig': tiff_c_text}
+
+    img_data = base64.b64decode(png_g['img_orig'])
+    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+
+    output = convert_from_64(png_g['img_orig'])
     assert (output == img_array).all()
     # output = ImageProcessing.convert_to_64(img_array)
-    # assert output == d2['img_orig']
+    # assert output == png_g['img_orig']
 
     # Histogram Equalization
-    hist = d2['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
+    hist = png_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
     img_eq = exposure.equalize_hist(img_array, hist)
     img_eq_exp = img_eq * 255
 
-    img_hist = convert_to_64(img_eq_exp)
+    img_hist = convert_to_64(img_eq_exp, png_g['img_metadata']['format'])
 
-    output = ImageProcessing.histogram_eq(d2['img_orig'],
-                                          d2['img_metadata']['hist_eq'])
+    output = ImageProcessing.histogram_eq(png_g['img_orig'],
+                                          png_g['img_metadata']['hist_eq'],
+                                          png_g['img_metadata']['format'])
     assert output == img_hist
 
     # Contrast stretching
-    p, q = np.percentile(img_array, d2['img_metadata']['contrast'])
+    p, q = np.percentile(img_array, png_g['img_metadata']['contrast'])
     img_rescale = exposure.rescale_intensity(img_array, in_range=(p, q))
-    img_cont = convert_to_64(img_rescale)
+    img_cont = convert_to_64(img_rescale, png_g['img_metadata']['format'])
 
-    out = ImageProcessing.contrast_stretching(d2['img_orig'],
-                                              d2['img_metadata']['contrast'])
+    out = ImageProcessing.contrast_stretching(png_g['img_orig'],
+                                              png_g['img_metadata']['contrast'],
+                                              png_g['img_metadata']['format'])
     assert out == img_cont
 
     # Reverse Video
     arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
     img_rev = np.subtract(arr255, img_array)
-    img_reverse = convert_to_64(img_rev)
+    img_reverse = convert_to_64(img_rev, png_g['img_metadata']['format'])
 
-    output = ImageProcessing.reverse_video(d2['img_orig'])
+    output = ImageProcessing.reverse_video(png_g['img_orig'],
+                                           png_g['img_metadata']['format'])
     assert output == img_reverse
 
     # Log Compression
-    if d2['img_metadata']['log_comp']:
+    if png_g['img_metadata']['log_comp']:
         img_array_log = log_comp(img_array)
     else:
         img_rev = invert(img_array)
         img_rev_log = log_comp(img_rev)
         img_array_log = invert(img_rev_log)
 
-    img_log = convert_to_64(img_array_log)
+    img_log = convert_to_64(img_array_log, png_g['img_metadata']['format'])
 
-    output = ImageProcessing.log_compression(d2['img_orig'],
-                                             d2['img_metadata']['log_comp'])
+    output = ImageProcessing.log_compression(png_g['img_orig'],
+                                             png_g['img_metadata']['log_comp'],
+                                             png_g['img_metadata']['format'])
     assert output == img_log
 
     pytest.raises(ValueError,
                   ImageProcessing.convert_from_64,
-                  d_color['img_orig'])
+                  png_c['img_orig'])
     return
