@@ -25,6 +25,7 @@ class ImageProcessing:
         cont_rng (array): between 0 and 100 indicating amount
         of contrast stretching
         log_rng (bool): True if standard log compression False if inverted
+        format: format of return image
     """
 
     def __init__(self, img, hist_rng, cont_rng, log_rng):
@@ -33,10 +34,11 @@ class ImageProcessing:
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    def histogram_eq(img, hist_rng):
+    def histogram_eq(img, hist_rng, format):
         """
         :param img:          base64 image string
         :param hist_rng      float of bins for histogram_eq
+        :param format:       format of return image
         :returns img_hist:   base64 string histogram equalized image
         :raises ImportError: packages not found
         """
@@ -54,16 +56,17 @@ class ImageProcessing:
             img_eq = exposure.equalize_hist(img_array, hist_rng_exp)
             img_eq_exp = img_eq * 255
 
-            img_hist = convert_to_64(img_eq_exp)
+            img_hist = convert_to_64(img_eq_exp, format)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
         return img_hist
 
-    def contrast_stretching(img, cont_rng):
+    def contrast_stretching(img, cont_rng, format):
         """
         :param img:          base64 image string
+        :param format:       format of return image
         :param cont_rng      array of range for contrast_stretching
         :returns img_cont:   base64 string contrast stretched image
         :raises ImportError: packages not found
@@ -82,16 +85,17 @@ class ImageProcessing:
             img_rescale = exposure.rescale_intensity(img_array,
                                                      in_range=(p, q))
 
-            img_cont = convert_to_64(img_rescale)
+            img_cont = convert_to_64(img_rescale, format)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
         return img_cont
 
-    def log_compression(img, log_rng):
+    def log_compression(img, log_rng, format):
         """
         :param img:          base64 image string
+        :param format:       format of return image
         :param log_rng       array of range for log compression
         :returns img_log:    base64 string log compressed image
         :raises ImportError: packages not found
@@ -113,16 +117,17 @@ class ImageProcessing:
                 img_rev_log = log_comp(img_rev)
                 img_array_log = invert(img_rev_log)
 
-            img_log = convert_to_64(img_array_log)
+            img_log = convert_to_64(img_array_log, format)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
         logging.info("Success: histogram equalization returned.")
         return img_log
 
-    def reverse_video(img):
+    def reverse_video(img, format):
         """
         :param img:           base64 image string
+        :param format:       format of return image
         :returns img_reverse: base64 string inverted image
         :raises ImportError:  packages not found
         """
@@ -138,7 +143,7 @@ class ImageProcessing:
             # Reverse Video
             img_rev = invert(img_array)
 
-            img_reverse = convert_to_64(img_rev)
+            img_reverse = convert_to_64(img_rev, format)
         except ImportError:
             logging.debug('ImportError: packages not found')
             raise ImportError("Import packages not found.")
@@ -188,7 +193,7 @@ def convert_from_64(img):
     try:
         img_data = base64.b64decode(img)
         img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8),
-                                 -1)
+                                 0)
     except ImportError:
         logging.debug('ImportError: packages not found')
         raise ImportError("Import packages not found.")
@@ -196,9 +201,10 @@ def convert_from_64(img):
     return img_array
 
 
-def convert_to_64(img_array):
+def convert_to_64(img_array, format):
     """
     :param img_array:    np.array image
+    :param format:       format of return image
     :returns img_str:    base64 image string
     :raises ImportError: packages not found
     """
@@ -210,7 +216,7 @@ def convert_to_64(img_array):
 
     try:
         img_array.astype('uint8')
-        img_data = cv2.imencode(".png", img_array)[1].tostring()
+        img_data = cv2.imencode(format, img_array)[1].tostring()
         img_byte_s = base64.b64encode(img_data)
         img_str = img_byte_s.decode("utf-8")
     except ImportError:
