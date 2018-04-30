@@ -3,6 +3,7 @@ from skimage import exposure
 import base64
 import cv2
 import math
+import logging
 
 
 class ImageProcessing:
@@ -20,134 +21,110 @@ class ImageProcessing:
         convert_to_64 (np.array): converts np.array image to base64 string
 
     Arguments:
-        img (string): base64 image file
-        hist_rng (int/float): num of bins for histogram_eq
-        cont_rng (array): between 0 and 100 indicating amount
-        of contrast stretching
-        log_rng (bool): True if standard log compression False if inverted
-        format: format of return image
+        img_dict = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b', # string
+          'img_metadata': {'hist_eq': 20, # int/float
+                           'contrast': [10, 80], # list (int/float)
+                           'log_comp': False, # boolean
+                           'reverse': True, # boolean
+                           'format': '.png'}, # string
+          'img_orig': tiff_c_text} # string
     """
 
-    def __init__(self, img, hist_rng, cont_rng, log_rng):
+    def __init__(self, img_dict):
         import logging
         logging.basicConfig(filename="image_processing_log.txt",
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    def histogram_eq(img, hist_rng, format):
+    def histogram_eq(img_dict):
         """
-        :param img:          base64 image string
-        :param hist_rng      float of bins for histogram_eq
-        :param format:       format of return image
+        :param img_dict:     dict containing image metedata and
+        base64 converted image
         :returns img_hist:   base64 string histogram equalized image
-        :raises ImportError: packages not found
         """
 
-        import logging
         logging.basicConfig(filename="image_processing_log.txt",
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-        try:
-            img_array = convert_from_64(img)
+        img_array = convert_from_64(img_dict)
+        hist_rng = img_dict['img_metadata']['hist_eq']
 
-            # Equalization
-            hist_rng_exp = hist_rng * img_array.shape[0] * img_array[1]
-            img_eq = exposure.equalize_hist(img_array, hist_rng_exp)
-            img_eq_exp = img_eq * 255
+        # Equalization
+        hist_rng_exp = hist_rng * img_array.shape[0] * img_array[1]
+        img_eq = exposure.equalize_hist(img_array, hist_rng_exp)
+        img_eq_exp = img_eq * 255
 
-            img_hist = convert_to_64(img_eq_exp, format)
-        except ImportError:
-            logging.debug('ImportError: packages not found')
-            raise ImportError("Import packages not found.")
+        img_hist = convert_to_64(img_eq_exp, img_dict)
         logging.info("Success: histogram equalization returned.")
         return img_hist
 
-    def contrast_stretching(img, cont_rng, format):
+    def contrast_stretching(img_dict):
         """
-        :param img:          base64 image string
-        :param format:       format of return image
-        :param cont_rng      array of range for contrast_stretching
+        :param img_dict:     dict containing image metedata and
+        base64 converted image
         :returns img_cont:   base64 string contrast stretched image
-        :raises ImportError: packages not found
         """
 
-        import logging
         logging.basicConfig(filename="image_processing_log.txt",
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-        try:
-            img_array = convert_from_64(img)
+        img_array = convert_from_64(img_dict)
 
-            # Contrast stretching
-            p, q = np.percentile(img_array, cont_rng)
-            img_rescale = exposure.rescale_intensity(img_array,
-                                                     in_range=(p, q))
+        # Contrast stretching
+        p, q = np.percentile(img_array,
+                             img_dict['img_metadata']['contrast'])
+        img_rescale = exposure.rescale_intensity(img_array,
+                                                 in_range=(p, q))
 
-            img_cont = convert_to_64(img_rescale, format)
-        except ImportError:
-            logging.debug('ImportError: packages not found')
-            raise ImportError("Import packages not found.")
-        logging.info("Success: histogram equalization returned.")
+        img_cont = convert_to_64(img_rescale, img_dict)
+        logging.info("Success: contrast stretching returned.")
         return img_cont
 
-    def log_compression(img, log_rng, format):
+    def log_compression(img_dict):
         """
-        :param img:          base64 image string
-        :param format:       format of return image
-        :param log_rng       array of range for log compression
+        :param img_dict:     dict containing image metedata and
+        base64 converted image
         :returns img_log:    base64 string log compressed image
-        :raises ImportError: packages not found
         """
 
-        import logging
         logging.basicConfig(filename="image_processing_log.txt",
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-        try:
-            img_array = convert_from_64(img)
+        img_array = convert_from_64(img_dict)
 
-            # log compression
-            if log_rng:
-                img_array_log = log_comp(img_array)
-            else:
-                img_rev = invert(img_array)
-                img_rev_log = log_comp(img_rev)
-                img_array_log = invert(img_rev_log)
+        # log compression
+        if img_dict['img_metadata']['log_comp']:
+            img_array_log = log_comp(img_array)
+        else:
+            img_rev = invert(img_array)
+            img_rev_log = log_comp(img_rev)
+            img_array_log = invert(img_rev_log)
 
-            img_log = convert_to_64(img_array_log, format)
-        except ImportError:
-            logging.debug('ImportError: packages not found')
-            raise ImportError("Import packages not found.")
-        logging.info("Success: histogram equalization returned.")
+        img_log = convert_to_64(img_array_log, img_dict)
+        logging.info("Success: log compression returned.")
         return img_log
 
-    def reverse_video(img, format):
+    def reverse_video(img_dict):
         """
-        :param img:           base64 image string
-        :param format:       format of return image
+        :param img_dict:     dict containing image metedata and
+        base64 converted image
         :returns img_reverse: base64 string inverted image
-        :raises ImportError:  packages not found
         """
 
-        import logging
         logging.basicConfig(filename="image_processing_log.txt",
                             format='%(asctime)s %(message)s',
                             datefmt='%m/%d/%Y %I:%M:%S %p')
 
-        try:
-            img_array = convert_from_64(img)
+        img_array = convert_from_64(img_dict)
 
-            # Reverse Video
-            img_rev = invert(img_array)
+        # Reverse Video
+        img_rev = invert(img_array)
 
-            img_reverse = convert_to_64(img_rev, format)
-        except ImportError:
-            logging.debug('ImportError: packages not found')
-            raise ImportError("Import packages not found.")
-        logging.info("Success: histogram equalization returned.")
+        img_reverse = convert_to_64(img_rev, img_dict)
+        logging.info("Success: reverse video returned.")
         return img_reverse
 
 
@@ -156,13 +133,13 @@ def log_comp(img_array):
     :param img_array:  np.array image
     :returns img_rev:  np.array inverted image
     """
-    import logging
+
     img_array_log = np.zeros((img_array.shape[0], img_array.shape[1]))
     c = 255 / math.log((1 + img_array.max()), 10)
     for i in range(img_array.shape[0]):
         for j in range(img_array.shape[1]):
             img_array_log[i][j] = c * math.log((1 + img_array[i][j]), 10)
-    logging.info("Success: image as np array returned.")
+    logging.info("Success: log compression sub returned.")
     return img_array_log
 
 
@@ -171,56 +148,54 @@ def invert(img_array):
     :param img_array:  np.array image
     :returns img_rev:  np.array inverted image
     """
-    import logging
+
     arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
     img_rev = np.subtract(arr255, img_array)
-    logging.info("Success: image as np array returned.")
+    logging.info("Success: inverted image returned")
     return img_rev
 
 
-def convert_from_64(img):
+def convert_from_64(img_dict):
     """
-    :param img:          base64 image string
-    :returns img_array:  np.array image
-    :raises ImportError: packages not found
+    :param img:         base64 image string
+    :returns img_array: np.array image
+    :raises TypeError:  Incorrect image type received
     """
 
-    import logging
     logging.basicConfig(filename="image_processing_log.txt",
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
-
     try:
+        img = img_dict['img_orig']
         img_data = base64.b64decode(img)
-        img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8),
-                                 0)
-    except ImportError:
-        logging.debug('ImportError: packages not found')
-        raise ImportError("Import packages not found.")
+        img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+        if isinstance(img_array, np.ndarray):
+            logging.debug('Correct File Type')
+        else:
+            1 == 2
+    except TypeError:
+        logging.debug('TypeError: Incorrect File Type')
+        raise TypeError('Incorrect File Type')
     logging.info("Success: image as np array returned.")
     return img_array
 
 
-def convert_to_64(img_array, format):
+def convert_to_64(img_array, img_dict):
     """
     :param img_array:    np.array image
-    :param format:       format of return image
+    :param img_dict:     dict containing image metedata and
+    base64 converted image
     :returns img_str:    base64 image string
-    :raises ImportError: packages not found
     """
 
-    import logging
     logging.basicConfig(filename="image_processing_log.txt",
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
 
-    try:
-        img_array.astype('uint8')
-        img_data = cv2.imencode(format, img_array)[1].tostring()
-        img_byte_s = base64.b64encode(img_data)
-        img_str = img_byte_s.decode("utf-8")
-    except ImportError:
-        logging.debug('ImportError: packages not found')
-        raise ImportError("Import packages not found.")
-    logging.info("Success: image as np array returned.")
+    img_array.astype('uint8')
+    img_data = cv2.imencode(img_dict['img_metadata']['format'],
+                            img_array)[1].tostring()
+    img_byte_s = base64.b64encode(img_data)
+    img_str = img_byte_s.decode("utf-8")
+    logging.info("Success: image as base64 returned.")
     return img_str
