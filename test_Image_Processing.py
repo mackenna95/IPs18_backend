@@ -9,6 +9,7 @@ def test_Image_Processing():
     from Image_Processing import convert_to_64
     from Image_Processing import log_comp
     from Image_Processing import invert
+    from Image_Processing import image_size
 
     f = open('png_g2.txt', 'r')
     png_g_text2 = f.read()
@@ -128,6 +129,10 @@ def test_Image_Processing():
     output = ImageProcessing.log_compression(png_g)
     assert output == img_log
 
+    # image size
+    output = image_size(png_g)
+    assert output == (263, 304)
+
     # ==============================================================
 
     # testing for tiff_greyscale
@@ -175,6 +180,10 @@ def test_Image_Processing():
 
     output = ImageProcessing.log_compression(tiff_g)
     assert output == img_log
+
+    # image size
+    output = image_size(tiff_g)
+    assert output == (263, 304)
 
     # ==============================================================
 
@@ -224,6 +233,10 @@ def test_Image_Processing():
     output = ImageProcessing.log_compression(png_c)
     assert output == img_log
 
+    # image size
+    output = image_size(png_c)
+    assert output == (200, 200)
+
     # ==============================================================
 
     # testing for tiff_color
@@ -272,10 +285,16 @@ def test_Image_Processing():
     output = ImageProcessing.log_compression(tiff_c)
     assert output == img_log
 
+    # image size
+    output = image_size(tiff_c)
+    assert output == (200, 200)
+
     # ==============================================================
 
     # Jpeg file unsupport
     pytest.raises(TypeError, convert_from_64(jpeg_g))
     pytest.raises(TypeError, convert_from_64(jpeg_c))
+    pytest.raises(TypeError, image_size(jpeg_g))
+    pytest.raises(TypeError, image_size(jpeg_c))
 
     return
