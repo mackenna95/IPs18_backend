@@ -82,13 +82,12 @@ def test_Image_Processing():
                                'format': '.png'},
               'img_orig': tiff_c_text}
 
+    # testing for png_greyscale
     img_data = base64.b64decode(png_g['img_orig'])
     img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
 
     output = convert_from_64(png_g)
     assert (output == img_array).all()
-    # output = ImageProcessing.convert_to_64(img_array)
-    # assert output == png_g['img_orig']
 
     # Histogram Equalization
     hist = png_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
@@ -129,6 +128,154 @@ def test_Image_Processing():
     output = ImageProcessing.log_compression(png_g)
     assert output == img_log
 
+    # ==============================================================
+
+    # testing for tiff_greyscale
+    img_data = base64.b64decode(tiff_g['img_orig'])
+    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+
+    output = convert_from_64(tiff_g)
+    assert (output == img_array).all()
+
+    # Histogram Equalization
+    heq = tiff_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
+    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq_exp = img_eq * 255
+
+    img_hist = convert_to_64(img_eq_exp, tiff_g)
+
+    output = ImageProcessing.histogram_eq(tiff_g)
+    assert output == img_hist
+
+    # Contrast stretching
+    p, q = np.percentile(img_array, tiff_g['img_metadata']['contrast'])
+    img_rescale = exposure.rescale_intensity(img_array, in_range=(p, q))
+    img_cont = convert_to_64(img_rescale, tiff_g)
+
+    o = ImageProcessing.contrast_stretching(tiff_g)
+    assert o == img_cont
+
+    # Reverse Video
+    arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+    img_rev = np.subtract(arr255, img_array)
+    img_reverse = convert_to_64(img_rev, tiff_g)
+
+    output = ImageProcessing.reverse_video(tiff_g)
+    assert output == img_reverse
+
+    # Log Compression
+    if tiff_g['img_metadata']['log_comp']:
+        img_array_log = log_comp(img_array)
+    else:
+        img_rev = invert(img_array)
+        img_rev_log = log_comp(img_rev)
+        img_array_log = invert(img_rev_log)
+
+    img_log = convert_to_64(img_array_log, tiff_g)
+
+    output = ImageProcessing.log_compression(tiff_g)
+    assert output == img_log
+
+    # ==============================================================
+
+    # testing for png_color
+    img_data = base64.b64decode(png_c['img_orig'])
+    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+
+    output = convert_from_64(png_c)
+    assert (output == img_array).all()
+
+    # Histogram Equalization
+    hist = png_c['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
+    img_eq = exposure.equalize_hist(img_array, hist)
+    img_eq_exp = img_eq * 255
+
+    img_hist = convert_to_64(img_eq_exp, png_c)
+
+    output = ImageProcessing.histogram_eq(png_c)
+    assert output == img_hist
+
+    # Contrast stretching
+    p, q = np.percentile(img_array, png_c['img_metadata']['contrast'])
+    img_rescale = exposure.rescale_intensity(img_array, in_range=(p, q))
+    img_cont = convert_to_64(img_rescale, png_c)
+
+    o = ImageProcessing.contrast_stretching(png_c)
+    assert o == img_cont
+
+    # Reverse Video
+    arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+    img_rev = np.subtract(arr255, img_array)
+    img_reverse = convert_to_64(img_rev, png_c)
+
+    output = ImageProcessing.reverse_video(png_c)
+    assert output == img_reverse
+
+    # Log Compression
+    if png_c['img_metadata']['log_comp']:
+        img_array_log = log_comp(img_array)
+    else:
+        img_rev = invert(img_array)
+        img_rev_log = log_comp(img_rev)
+        img_array_log = invert(img_rev_log)
+
+    img_log = convert_to_64(img_array_log, png_c)
+
+    output = ImageProcessing.log_compression(png_c)
+    assert output == img_log
+
+    # ==============================================================
+
+    # testing for tiff_color
+    img_data = base64.b64decode(tiff_c['img_orig'])
+    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+
+    output = convert_from_64(tiff_c)
+    assert (output == img_array).all()
+
+    # Histogram Equalization
+    heq = tiff_c['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
+    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq_exp = img_eq * 255
+
+    img_hist = convert_to_64(img_eq_exp, tiff_c)
+
+    output = ImageProcessing.histogram_eq(tiff_c)
+    assert output == img_hist
+
+    # Contrast stretching
+    p, q = np.percentile(img_array, tiff_c['img_metadata']['contrast'])
+    img_rescale = exposure.rescale_intensity(img_array, in_range=(p, q))
+    img_cont = convert_to_64(img_rescale, tiff_c)
+
+    o = ImageProcessing.contrast_stretching(tiff_c)
+    assert o == img_cont
+
+    # Reverse Video
+    arr255 = np.full((img_array.shape[0], img_array.shape[1]), 255)
+    img_rev = np.subtract(arr255, img_array)
+    img_reverse = convert_to_64(img_rev, tiff_c)
+
+    output = ImageProcessing.reverse_video(tiff_c)
+    assert output == img_reverse
+
+    # Log Compression
+    if tiff_g['img_metadata']['log_comp']:
+        img_array_log = log_comp(img_array)
+    else:
+        img_rev = invert(img_array)
+        img_rev_log = log_comp(img_rev)
+        img_array_log = invert(img_rev_log)
+
+    img_log = convert_to_64(img_array_log, tiff_c)
+
+    output = ImageProcessing.log_compression(tiff_c)
+    assert output == img_log
+
+    # ==============================================================
+
     # Jpeg file unsupport
     pytest.raises(TypeError, convert_from_64(jpeg_g))
+    pytest.raises(TypeError, convert_from_64(jpeg_c))
+
     return

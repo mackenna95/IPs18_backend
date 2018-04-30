@@ -165,14 +165,15 @@ def convert_from_64(img_dict):
     logging.basicConfig(filename="image_processing_log.txt",
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
-
-    img = img_dict['img_orig']
-    img_data = base64.b64decode(img)
-    img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
-
-    if isinstance(img_array, np.ndarray):
-        logging.debug('Correct File Type')
-    else:
+    try:
+        img = img_dict['img_orig']
+        img_data = base64.b64decode(img)
+        img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
+        if isinstance(img_array, np.ndarray):
+            logging.debug('Correct File Type')
+        else:
+            1 == 2
+    except TypeError:
         logging.debug('TypeError: Incorrect File Type')
         raise TypeError('Incorrect File Type')
     logging.info("Success: image as np array returned.")
