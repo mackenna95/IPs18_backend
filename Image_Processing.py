@@ -12,13 +12,13 @@ class ImageProcessing:
     __init__ sets the attributes
 
     Attributes:
-        convert_from_64 (string): converts bas64 string image to np.array
-        histogram_eq (string, int/float): returns histogram equalization
-        contrast_stretching (string, array(int/float)): returns
-        contrast stretching
-        log_compression (string, int): returns log compression of image
-        reverse_video (string, bool): returns reverse video of image
+        convert_from_64 (dict): converts bas64 string image to np.array
+        histogram_eq (dict): returns histogram equalization
+        contrast_stretching (dict): returns contrast stretching
+        log_compression (dict): returns log compression of image
+        reverse_video (dict): returns reverse video of image
         convert_to_64 (np.array): converts np.array image to base64 string
+        image_size(dict): Returns image pixel size
 
     Arguments:
         img_dict = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b', # string
@@ -157,7 +157,8 @@ def invert(img_array):
 
 def convert_from_64(img_dict):
     """
-    :param img:         base64 image string
+    :param img_dict:    dict containing image metedata and
+    base64 converted image
     :returns img_array: np.array image
     :raises TypeError:  Incorrect image type received
     """
@@ -199,3 +200,24 @@ def convert_to_64(img_array, img_dict):
     img_str = img_byte_s.decode("utf-8")
     logging.info("Success: image as base64 returned.")
     return img_str
+
+
+def image_size(img_dict):
+    """
+    :param img_dict:    dict containing image metedata and
+    base64 converted image
+    :returns size_array: np.array of image size
+    """
+
+    logging.basicConfig(filename="image_processing_log.txt",
+                        format='%(asctime)s %(message)s',
+                        datefmt='%m/%d/%Y %I:%M:%S %p')
+
+    try:
+        img_array = convert_from_64(img_dict)
+        size_array = img_array.shape
+    except AttributeError:
+        logging.debug('AttributeError: Incorrect File Type')
+        return AttributeError('Incorrect File Type')
+    logging.info("Success: image size as np array returned.")
+    return size_array
