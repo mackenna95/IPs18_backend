@@ -101,8 +101,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    hist = png_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, hist)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, png_g)
@@ -153,8 +152,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    heq = tiff_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, tiff_g)
@@ -205,8 +203,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    heq = jpeg_g['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, jpeg_g)
@@ -257,8 +254,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    hist = png_c['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, hist)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, png_c)
@@ -309,8 +305,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    heq = tiff_c['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, tiff_c)
@@ -361,8 +356,7 @@ def test_Image_Processing():
     assert (output == img_array).all()
 
     # Histogram Equalization
-    heq = jpeg_c['img_metadata']['hist_eq'] * img_array.shape[0] * img_array[1]
-    img_eq = exposure.equalize_hist(img_array, heq)
+    img_eq = exposure.equalize_hist(img_array)
     img_eq_exp = img_eq * 255
 
     img_hist = convert_to_64(img_eq_exp, jpeg_c)

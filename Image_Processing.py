@@ -51,8 +51,7 @@ class ImageProcessing:
         hist_rng = img_dict['img_metadata']['hist_eq']
 
         # Equalization
-        hist_rng_exp = hist_rng * img_array.shape[0] * img_array[1]
-        img_eq = exposure.equalize_hist(img_array, hist_rng_exp)
+        img_eq = exposure.equalize_hist(img_array)
         img_eq_exp = img_eq * 255
 
         img_hist = convert_to_64(img_eq_exp, img_dict)
