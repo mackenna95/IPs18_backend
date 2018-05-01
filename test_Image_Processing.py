@@ -88,10 +88,10 @@ def test_Image_Processing():
 
     error_g = {'img_ID': '3e056818-3f45-11e8-b467-0ed5f89f718b',
                'img_metadata': {'hist_eq': 20,
-                               'contrast': [10, 80],
-                               'log_comp': False,
-                               'reverse': True,
-                               'format': '.png'},
+                                'contrast': [10, 80],
+                                'log_comp': False,
+                                'reverse': True,
+                                'format': '.png'},
                'img_orig': error_g_text}
 
     # testing for png_greyscale
