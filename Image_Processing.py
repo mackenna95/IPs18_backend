@@ -127,6 +127,26 @@ class ImageProcessing:
         logging.info("Success: reverse video returned.")
         return img_reverse
 
+    def image_size(img_dict):
+        """
+        :param img_dict:    dict containing image metedata and
+        base64 converted image
+        :returns size_array: np.array of image size
+        """
+
+        logging.basicConfig(filename="image_processing_log.txt",
+                            format='%(asctime)s %(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+
+        try:
+            img_array = convert_from_64(img_dict)
+            size_array = img_array.shape
+        except AttributeError:
+            logging.debug('AttributeError: Incorrect File Type')
+            return AttributeError('Incorrect File Type')
+        logging.info("Success: image size as np array returned.")
+        return size_array
+
 
 def log_comp(img_array):
     """
@@ -208,24 +228,3 @@ def convert_to_64(img_array, img_dict):
 
     logging.info("Success: image as base64 returned.")
     return img_str
-
-
-def image_size(img_dict):
-    """
-    :param img_dict:    dict containing image metedata and
-    base64 converted image
-    :returns size_array: np.array of image size
-    """
-
-    logging.basicConfig(filename="image_processing_log.txt",
-                        format='%(asctime)s %(message)s',
-                        datefmt='%m/%d/%Y %I:%M:%S %p')
-
-    try:
-        img_array = convert_from_64(img_dict)
-        size_array = img_array.shape
-    except AttributeError:
-        logging.debug('AttributeError: Incorrect File Type')
-        return AttributeError('Incorrect File Type')
-    logging.info("Success: image size as np array returned.")
-    return size_array
