@@ -167,8 +167,9 @@ def convert_from_64(img_dict):
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
     try:
-        img = img_dict['img_orig']
-        img_data = base64.b64decode(img)
+        # data_uri = img_dict['img_orig']
+        # img = re.sub(r'.*,', '', data_uri)
+        img_data = base64.b64decode(img_dict['img_orig'])
         img_array = cv2.imdecode(np.frombuffer(img_data, dtype=np.uint8), 0)
         if isinstance(img_array, np.ndarray):
             logging.debug('Correct File Type')
@@ -193,11 +194,18 @@ def convert_to_64(img_array, img_dict):
                         format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
 
+    # ftype = '.'
+    # ftype += img_dict['img_metadata']['format']
+
     img_array.astype('uint8')
     img_data = cv2.imencode(img_dict['img_metadata']['format'],
                             img_array)[1].tostring()
     img_byte_s = base64.b64encode(img_data)
     img_str = img_byte_s.decode("utf-8")
+
+    # img_data_uri = 'data:image/' + img_dict['img_metadata']['format']
+    # img_str = img_data_uri + ';base64,' + img_str
+
     logging.info("Success: image as base64 returned.")
     return img_str
 
