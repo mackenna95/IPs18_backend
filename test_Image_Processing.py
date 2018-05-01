@@ -9,7 +9,6 @@ def test_Image_Processing():
     from Image_Processing import convert_to_64
     from Image_Processing import log_comp
     from Image_Processing import invert
-    from Image_Processing import image_size
 
     f = open('png_g2.txt', 'r')
     png_g_text2 = f.read()
@@ -141,7 +140,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(png_g)
+    output = ImageProcessing.image_size(png_g)
     assert output == (263, 304)
 
     # ==============================================================
@@ -193,7 +192,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(tiff_g)
+    output = ImageProcessing.image_size(tiff_g)
     assert output == (263, 304)
 
     # ==============================================================
@@ -245,7 +244,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(jpeg_g)
+    output = ImageProcessing.image_size(jpeg_g)
     assert output == (263, 304)
 
     # ==============================================================
@@ -297,7 +296,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(png_c)
+    output = ImageProcessing.image_size(png_c)
     assert output == (200, 200)
 
     # ==============================================================
@@ -349,7 +348,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(tiff_c)
+    output = ImageProcessing.image_size(tiff_c)
     assert output == (200, 200)
 
     # ==============================================================
@@ -401,7 +400,7 @@ def test_Image_Processing():
     assert output == img_log
 
     # image size
-    output = image_size(jpeg_c)
+    output = ImageProcessing.image_size(jpeg_c)
     assert output == (200, 200)
 
     # ==============================================================
