@@ -33,11 +33,7 @@ The functions are as follows:
     - Inverts the greyscale of an image (i.e. black become white).
 
 ## Screenshots
-Placeholder images
-
 ![](Capture.png)
-
-![](Capture2.png)
  
 ## Travis
 Travis CI was used for this build.
